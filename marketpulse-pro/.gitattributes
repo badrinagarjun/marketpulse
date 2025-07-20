@@ -1,0 +1,14 @@
+* text=auto
+
+# Enforce LF for all code files across all platforms
+*.js   text eol=lf
+*.jsx  text eol=lf
+*.ts   text eol=lf
+*.json text eol=lf
+*.css  text eol=lf
+*.html text eol=lf
+*.md   text eol=lf
+
+# Allow CRLF for Windows-only scripts
+*.cmd text eol=crlf
+*.bat text eol=crlf
