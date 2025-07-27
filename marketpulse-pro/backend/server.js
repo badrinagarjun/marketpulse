@@ -1,14 +1,20 @@
 // backend/server.js
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
+import 'dotenv/config'; // Updated dotenv import
+import express from 'express';
+import cors from 'cors';
+import mongoose from 'mongoose';
 
 const app = express();
 const PORT = process.env.PORT || 5001;
 
 // Middleware
-app.use(cors()); // Allows cross-origin requests
-app.use(express.json()); // Parses incoming JSON requests
+app.use(cors());
+app.use(express.json());
+
+// --- Connect to MongoDB ---
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB connection established successfully."))
+  .catch((err) => console.error("MongoDB connection error:", err));
 
 // Basic route to test the server
 app.get('/', (req, res) => {
