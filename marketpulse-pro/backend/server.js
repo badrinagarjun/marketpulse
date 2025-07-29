@@ -1,8 +1,8 @@
-// backend/server.js
-import 'dotenv/config'; // Updated dotenv import
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
+import stockRoutes from './routes/stockRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -11,16 +11,20 @@ const PORT = process.env.PORT || 5001;
 app.use(cors());
 app.use(express.json());
 
-// --- Connect to MongoDB ---
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB connection established successfully."))
-  .catch((err) => console.error("MongoDB connection error:", err));
+// --- API Routes ---
+app.use('/api/stock', stockRoutes);
 
 // Basic route to test the server
 app.get('/', (req, res) => {
   res.send('MarketPulse Pro Backend is running! 🚀');
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port: ${PORT}`);
-});
+// --- Connect to MongoDB and start server ---
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log("MongoDB connection established successfully.");
+    app.listen(PORT, () => {
+      console.log(`Server is running on port: ${PORT}`);
+    });
+  })
+  .catch((err) => console.error("MongoDB connection error:", err));
