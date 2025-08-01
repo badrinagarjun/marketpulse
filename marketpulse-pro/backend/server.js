@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import stockRoutes from './routes/stockRoutes.js';
+import journalRoutes from './routes/journalRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -18,6 +19,11 @@ app.use('/api/stock', stockRoutes);
 app.get('/', (req, res) => {
   res.send('MarketPulse Pro Backend is running! 🚀');
 });
+
+app.use('/api/stock', stockRoutes);
+app.use('/api/journal', journalRoutes); // Use journal routes
+
+
 
 // --- Connect to MongoDB and start server ---
 mongoose.connect(process.env.MONGO_URI)
