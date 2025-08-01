@@ -40,5 +40,18 @@ router.delete('/:id', async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+// PUT (update) a journal entry
+router.put('/:id', async (req, res) => {
+  try {
+    const updatedEntry = await JournalEntry.findByIdAndUpdate(
+      req.params.id, 
+      req.body, 
+      { new: true } // This option returns the updated document
+    );
+    res.json(updatedEntry);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
 
 export default router;
