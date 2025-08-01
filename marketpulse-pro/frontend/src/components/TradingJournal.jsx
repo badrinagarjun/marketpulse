@@ -22,9 +22,17 @@ const TradingJournal = () => {
     e.preventDefault();
     const newEntry = { symbol, tradeType, quantity, price, notes };
     await axios.post('http://localhost:5001/api/journal', newEntry);
-    fetchEntries(); // Refresh the list
-    // Reset form
+    fetchEntries();
     setSymbol(''); setQuantity(''); setPrice(''); setNotes('');
+  };
+  
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://localhost:5001/api/journal/${id}`);
+      fetchEntries();
+    } catch (error) {
+      console.error('Failed to delete entry:', error);
+    }
   };
 
   return (
@@ -47,6 +55,13 @@ const TradingJournal = () => {
           <p><strong>{entry.symbol}</strong> - {entry.tradeType} {entry.quantity} @ ${entry.price}</p>
           <p><em>Notes: {entry.notes}</em></p>
           <small>{new Date(entry.tradeDate).toLocaleString()}</small>
+          
+          {/* --- ADD THIS BUTTON --- */}
+          <button onClick={() => handleDelete(entry._id)} style={{ marginLeft: '10px', color: 'red' }}>
+            Delete
+          </button>
+          {/* ----------------------- */}
+
         </div>
       ))}
     </div>

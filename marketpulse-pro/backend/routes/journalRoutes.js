@@ -30,5 +30,15 @@ router.post('/', async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 });
+// DELETE a journal entry
+router.delete('/:id', async (req, res) => {
+  try {
+    const entry = await JournalEntry.findByIdAndDelete(req.params.id);
+    if (!entry) return res.status(404).json({ message: 'Cannot find entry' });
+    res.json({ message: 'Deleted journal entry' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 
 export default router;
