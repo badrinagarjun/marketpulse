@@ -80,4 +80,14 @@ router.get('/account', async (req, res) => {
   }
 });
 
+// GET all open positions
+router.get('/positions', async (req, res) => {
+  try {
+    const positions = await Position.find();
+    res.json(positions);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 export default router;
