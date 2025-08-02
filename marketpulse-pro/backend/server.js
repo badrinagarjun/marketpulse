@@ -4,6 +4,7 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import stockRoutes from './routes/stockRoutes.js';
 import journalRoutes from './routes/journalRoutes.js';
+import challengeRoutes from './routes/challengeRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -23,6 +24,8 @@ app.get('/', (req, res) => {
 app.use('/api/stock', stockRoutes);
 app.use('/api/journal', journalRoutes); // Use journal routes
 
+app.use('/api/journal', journalRoutes);
+app.use('/api/challenge', challengeRoutes); // Use challenge routes
 
 
 // --- Connect to MongoDB and start server ---
