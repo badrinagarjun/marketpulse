@@ -66,6 +66,18 @@ router.post('/order', async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Failed to process order.' });
   }
+  
+});
+
+// GET the main challenge account
+router.get('/account', async (req, res) => {
+  try {
+    const account = await ChallengeAccount.findOne();
+    if (!account) return res.status(404).json({ message: 'Account not found. Please initialize it.' });
+    res.json(account);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
 export default router;
