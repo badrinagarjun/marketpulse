@@ -21,52 +21,69 @@ router.get('/init', async (req, res) => {
   }
 });
 
-// POST a new "Buy" order
+
+// POST a new order (handles both Buy and Sell)
 router.post('/order', async (req, res) => {
-  const { symbol, tradeType, quantity } = req.body;
-  
-  if (tradeType !== 'Buy') {
-    return res.status(400).json({ message: 'Only "Buy" orders are supported in this version.' });
-  }
+  const { symbol, tradeType, quantity: tradeQuantity } = req.body;
+  const quantity = Number(tradeQuantity);
 
   try {
-    // 1. Get the current stock price from Alpha Vantage
+    // 1. Get current stock price
     const priceResponse = await axios.get(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${API_KEY}`);
     const currentPrice = parseFloat(priceResponse.data['Global Quote']['05. price']);
+    if (!currentPrice) return res.status(400).json({ message: 'Could not fetch a valid price.' });
 
-    if (!currentPrice) {
-      return res.status(400).json({ message: 'Could not fetch a valid price for the symbol.' });
-    }
-
-    // 2. Get the challenge account
+    // 2. Get user account and existing position
     const account = await ChallengeAccount.findOne();
-    const tradeCost = currentPrice * quantity;
+    const existingPosition = await Position.findOne({ symbol });
 
-    // 3. Check if there is enough balance
-    if (account.currentBalance < tradeCost) {
-      return res.status(400).json({ message: 'Insufficient funds.' });
+    if (tradeType === 'Buy') {
+      const tradeCost = currentPrice * quantity;
+      if (account.currentBalance < tradeCost) return res.status(400).json({ message: 'Insufficient funds.' });
+
+      account.currentBalance -= tradeCost;
+
+      if (existingPosition) {
+        // Update existing position (averaging down/up)
+        const totalQuantity = existingPosition.quantity + quantity;
+        const newAveragePrice = ((existingPosition.averagePrice * existingPosition.quantity) + (currentPrice * quantity)) / totalQuantity;
+        existingPosition.quantity = totalQuantity;
+        existingPosition.averagePrice = newAveragePrice;
+        await existingPosition.save();
+      } else {
+        // Create new position
+        const newPosition = new Position({ symbol, quantity, averagePrice: currentPrice });
+        await newPosition.save();
+      }
+      await account.save();
+      res.status(201).json({ message: `Successfully bought ${quantity} of ${symbol}.` });
+
+    } else if (tradeType === 'Sell') {
+      if (!existingPosition || existingPosition.quantity < quantity) {
+        return res.status(400).json({ message: 'Insufficient shares to sell.' });
+      }
+
+      const proceeds = currentPrice * quantity;
+      account.currentBalance += proceeds;
+
+      if (existingPosition.quantity === quantity) {
+        // Selling all shares, so remove the position
+        await Position.findByIdAndDelete(existingPosition._id);
+      } else {
+        // Selling some shares, so update quantity
+        existingPosition.quantity -= quantity;
+        await existingPosition.save();
+      }
+      await account.save();
+      res.status(201).json({ message: `Successfully sold ${quantity} of ${symbol}.` });
+    } else {
+      res.status(400).json({ message: 'Invalid trade type.' });
     }
-
-    // 4. Update balance and create/update position (simplified logic for now)
-    account.currentBalance -= tradeCost;
-    
-    // For now, we assume each buy creates a new position for simplicity
-    const newPosition = new Position({
-      symbol,
-      quantity,
-      averagePrice: currentPrice,
-    });
-
-    await newPosition.save();
-    await account.save();
-    
-    res.status(201).json({ message: `Successfully bought ${quantity} of ${symbol}.`, account });
 
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Failed to process order.' });
   }
-  
 });
 
 // GET the main challenge account

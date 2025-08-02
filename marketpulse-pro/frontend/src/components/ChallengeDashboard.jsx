@@ -12,10 +12,8 @@ const ChallengeDashboard = () => {
     try {
       const accountRes = await axios.get('http://localhost:5001/api/challenge/account');
       setAccount(accountRes.data);
-
       const positionsRes = await axios.get('http://localhost:5001/api/challenge/positions');
       setPositions(positionsRes.data);
-
     } catch (error) {
       console.error('Failed to fetch data:', error);
       setMessage('Could not load challenge data.');
@@ -26,14 +24,16 @@ const ChallengeDashboard = () => {
     fetchData();
   }, []);
 
-  const handleBuyOrder = async (e) => {
+  const handleOrder = async (e, tradeType) => {
     e.preventDefault();
+    if (!symbol || !quantity) return; // Prevent empty submission
+    
     try {
-      const order = { symbol, tradeType: 'Buy', quantity };
+      const order = { symbol, tradeType, quantity };
       const res = await axios.post('http://localhost:5001/api/challenge/order', order);
       setMessage(res.data.message);
-      setSymbol(''); // Clear form
-      setQuantity(''); // Clear form
+      setSymbol('');
+      setQuantity('');
       fetchData(); 
     } catch (error) {
       setMessage(error.response?.data?.message || 'Order failed.');
@@ -50,8 +50,7 @@ const ChallengeDashboard = () => {
       <p><strong>Balance:</strong> ${account.currentBalance.toFixed(2)}</p>
       <hr />
       <h4>Place Order</h4>
-      {/* --- FIX IS HERE: The full form is now included --- */}
-      <form onSubmit={handleBuyOrder}>
+      <form onSubmit={(e) => handleOrder(e, 'Buy')}>
         <input 
           type="text" 
           value={symbol} 
@@ -67,6 +66,7 @@ const ChallengeDashboard = () => {
           required 
         />
         <button type="submit">Buy</button>
+        <button type="button" onClick={(e) => handleOrder(e, 'Sell')} style={{marginLeft: '10px'}}>Sell</button>
       </form>
       {message && <p>{message}</p>}
       <hr />
