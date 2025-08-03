@@ -4,6 +4,7 @@ import axios from 'axios';
 const ChallengeDashboard = () => {
   const [account, setAccount] = useState(null);
   const [positions, setPositions] = useState([]);
+  const [unrealizedPnL, setUnrealizedPnL] = useState(0); // New state for P&L
   const [symbol, setSymbol] = useState('');
   const [quantity, setQuantity] = useState('');
   const [message, setMessage] = useState('');
@@ -16,7 +17,6 @@ const ChallengeDashboard = () => {
       setPositions(positionsRes.data);
     } catch (error) {
       console.error('Failed to fetch data:', error);
-      setMessage('Could not load challenge data.');
     }
   };
 
@@ -24,9 +24,36 @@ const ChallengeDashboard = () => {
     fetchData();
   }, []);
 
+  // New useEffect to calculate P&L when positions change
+  useEffect(() => {
+    const calculatePnL = async () => {
+      let totalPnL = 0;
+      for (const pos of positions) {
+        try {
+          const res = await axios.get(`http://localhost:5001/api/stock/${pos.symbol}`);
+          const globalQuote = res.data['Global Quote'];
+          if (globalQuote && globalQuote['05. price']) {
+            const currentPrice = parseFloat(globalQuote['05. price']);
+            const pnl = (currentPrice - pos.averagePrice) * pos.quantity;
+            totalPnL += pnl;
+          }
+        } catch (error) {
+          console.warn(`Could not fetch P&L for ${pos.symbol}.`, error);
+        }
+      }
+      setUnrealizedPnL(totalPnL);
+    };
+
+    if (positions.length > 0) {
+      calculatePnL();
+    } else {
+      setUnrealizedPnL(0);
+    }
+  }, [positions]);
+
   const handleOrder = async (e, tradeType) => {
     e.preventDefault();
-    if (!symbol || !quantity) return; // Prevent empty submission
+    if (!symbol || !quantity) return;
     
     try {
       const order = { symbol, tradeType, quantity };
@@ -40,14 +67,16 @@ const ChallengeDashboard = () => {
     }
   };
 
-  if (!account) {
-    return <p>Loading Challenge Account...</p>;
-  }
+  if (!account) return <p>Loading Challenge Account...</p>;
+
+  const pnlColor = unrealizedPnL >= 0 ? 'green' : 'red';
 
   return (
     <div>
       <h3>Challenge Account</h3>
       <p><strong>Balance:</strong> ${account.currentBalance.toFixed(2)}</p>
+      {/* New line to display P&L */}
+      <p><strong>Unrealized P&L:</strong> <span style={{ color: pnlColor }}>${unrealizedPnL.toFixed(2)}</span></p>
       <hr />
       <h4>Place Order</h4>
       <form onSubmit={(e) => handleOrder(e, 'Buy')}>

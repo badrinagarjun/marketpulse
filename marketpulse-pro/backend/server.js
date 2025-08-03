@@ -27,6 +27,9 @@ app.use('/api/journal', journalRoutes); // Use journal routes
 app.use('/api/journal', journalRoutes);
 app.use('/api/challenge', challengeRoutes); // Use challenge routes
 
+app.use('/api/stock', stockRoutes);
+app.use('/api/challenge', challengeRoutes);
+
 
 // --- Connect to MongoDB and start server ---
 mongoose.connect(process.env.MONGO_URI)
