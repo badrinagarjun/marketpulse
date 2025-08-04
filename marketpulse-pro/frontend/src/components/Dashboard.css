@@ -1,0 +1,23 @@
+/* frontend/src/components/Dashboard.css */
+.dashboard {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 20px;
+  justify-content: center;
+}
+
+.dashboard-card {
+  background-color: #2a2a2e;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  flex: 1 1 450px; /* Flexbox properties for responsive cards */
+  max-width: 500px;
+}
+
+.dashboard-card h3 {
+  margin-top: 0;
+  border-bottom: 1px solid #444;
+  padding-bottom: 10px;
+}
