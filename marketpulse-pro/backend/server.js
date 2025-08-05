@@ -17,20 +17,19 @@ app.use(express.json());
 // --- API Routes ---
 app.use('/api/stock', stockRoutes);
 app.use('/api/auth', authRoutes);  
+app.use('/api/journal', journalRoutes); // Use journal routes
+app.use('/api/challenge', challengeRoutes); // Use challenge routes
+
 
 // Basic route to test the server
 app.get('/', (req, res) => {
   res.send('MarketPulse Pro Backend is running! 🚀');
 });
 
-app.use('/api/stock', stockRoutes);
-app.use('/api/journal', journalRoutes); // Use journal routes
 
-app.use('/api/journal', journalRoutes);
-app.use('/api/challenge', challengeRoutes); // Use challenge routes
 
-app.use('/api/stock', stockRoutes);
-app.use('/api/challenge', challengeRoutes);
+
+
 
 
 // --- Connect to MongoDB and start server ---
