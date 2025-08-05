@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import stockRoutes from './routes/stockRoutes.js';
 import journalRoutes from './routes/journalRoutes.js';
 import challengeRoutes from './routes/challengeRoutes.js';
+import authRoutes from './routes/authRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -15,6 +16,7 @@ app.use(express.json());
 
 // --- API Routes ---
 app.use('/api/stock', stockRoutes);
+app.use('/api/auth', authRoutes);  
 
 // Basic route to test the server
 app.get('/', (req, res) => {
