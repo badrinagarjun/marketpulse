@@ -14,9 +14,16 @@ function App() {
         </nav>
         <h1>MarketPulse Pro 🚀</h1>
         <Routes>
-          <Route path="/" element={<Dashboard />} />
+          <Route 
+            path="/" 
+            element={
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            } 
+          />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/login"element={<LoginPage />} />
+          <Route path="/login" element={<LoginPage />} />
         </Routes>
       </div>
     </Router>

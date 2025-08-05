@@ -1,24 +1,26 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext'; // Import useAuth
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const navigate = useNavigate();
+  const { login } = useAuth(); // Use the custom hook
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const res = await axios.post('http://localhost:5001/api/auth/login', { email, password });
-      // In the next step, we will save the token (res.data.token)
-      console.log(res.data.token); 
-      setError('Logged in successfully! (Token in console)');
+      login(res.data.token);
+      navigate('/');
     } catch (err) {
-  setError('Invalid credentials.');
-  console.error('Login failed:', err); // Log the full error for debugging
-  }
-};
-
+      setError('Invalid credentials.');
+      console.error('Login error', err);
+    }
+  };
   return (
     <div>
       <h2>Login</h2>
