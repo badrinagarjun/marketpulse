@@ -26,12 +26,6 @@ app.get('/', (req, res) => {
   res.send('MarketPulse Pro Backend is running! 🚀');
 });
 
-
-
-
-
-
-
 // --- Connect to MongoDB and start server ---
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
