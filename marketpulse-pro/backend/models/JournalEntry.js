@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
 const journalEntrySchema = new mongoose.Schema({
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   symbol: { type: String, required: true },
   tradeType: { type: String, enum: ['Buy', 'Sell'], required: true },
   quantity: { type: Number, required: true },
@@ -9,6 +10,4 @@ const journalEntrySchema = new mongoose.Schema({
   tradeDate: { type: Date, default: Date.now }
 });
 
-const JournalEntry = mongoose.model('JournalEntry', journalEntrySchema);
-
-export default JournalEntry;
+export default mongoose.model('JournalEntry', journalEntrySchema);
