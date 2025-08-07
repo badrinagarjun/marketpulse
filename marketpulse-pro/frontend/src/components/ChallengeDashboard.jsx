@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import api from '../api/axiosConfig.js'; // Updated import
+import api from '../api/axiosConfig';
+import AccountSelection from './AccountSelection';
 
 const ChallengeDashboard = () => {
   const [account, setAccount] = useState(null);
   const [positions, setPositions] = useState([]);
+  const [needsAccount, setNeedsAccount] = useState(false);
   const [unrealizedPnL, setUnrealizedPnL] = useState(0);
   const [symbol, setSymbol] = useState('');
   const [quantity, setQuantity] = useState('');
@@ -13,10 +15,16 @@ const ChallengeDashboard = () => {
     try {
       const accountRes = await api.get('/api/challenge/account');
       setAccount(accountRes.data);
+      setNeedsAccount(false);
+      
       const positionsRes = await api.get('/api/challenge/positions');
       setPositions(positionsRes.data);
     } catch (error) {
-      console.error('Failed to fetch data:', error);
+      if (error.response?.status === 404) {
+        setNeedsAccount(true);
+      } else {
+        console.error('Failed to fetch data:', error);
+      }
     }
   };
 
@@ -24,6 +32,13 @@ const ChallengeDashboard = () => {
     fetchData();
   }, []);
 
+  const handleAccountCreated = (newAccount) => {
+    setAccount(newAccount);
+    setNeedsAccount(false);
+    fetchData();
+  };
+
+  // Rest of your existing component logic...
   useEffect(() => {
     const calculatePnL = async () => {
       let totalPnL = 0;
@@ -66,24 +81,55 @@ const ChallengeDashboard = () => {
     }
   };
 
+  // Show account selection if user doesn't have an account
+  if (needsAccount) {
+    return (
+      <div>
+        <h3>Challenge Trading</h3>
+        <AccountSelection onAccountCreated={handleAccountCreated} />
+      </div>
+    );
+  }
+
   if (!account) return <p>Loading Challenge Account...</p>;
 
   const pnlColor = unrealizedPnL >= 0 ? 'green' : 'red';
 
   return (
     <div>
-      <h3>Challenge Account</h3>
-      <p><strong>Balance:</strong> ${account.currentBalance.toFixed(2)}</p>
+      <h3>Challenge Account ({account.accountType.toUpperCase()})</h3>
+      <p><strong>Starting Balance:</strong> ${account.startingBalance.toLocaleString()}</p>
+      <p><strong>Current Balance:</strong> ${account.currentBalance.toFixed(2)}</p>
       <p><strong>Unrealized P&L:</strong> <span style={{ color: pnlColor }}>${unrealizedPnL.toFixed(2)}</span></p>
       <hr />
+      
       <h4>Place Order</h4>
       <form onSubmit={(e) => handleOrder(e, 'Buy')}>
-        <input type="text" value={symbol} onChange={(e) => setSymbol(e.target.value.toUpperCase())} placeholder="Symbol (e.g. AAPL)" required />
-        <input type="number" value={quantity} onChange={(e) => setQuantity(e.target.value)} placeholder="Quantity" required />
+        <input 
+          type="text" 
+          value={symbol} 
+          onChange={(e) => setSymbol(e.target.value.toUpperCase())} 
+          placeholder="Symbol (e.g. AAPL)" 
+          required 
+        />
+        <input 
+          type="number" 
+          value={quantity} 
+          onChange={(e) => setQuantity(e.target.value)} 
+          placeholder="Quantity" 
+          required 
+        />
         <button type="submit">Buy</button>
-        <button type="button" onClick={(e) => handleOrder(e, 'Sell')} style={{marginLeft: '10px'}}>Sell</button>
+        <button 
+          type="button" 
+          onClick={(e) => handleOrder(e, 'Sell')} 
+          style={{marginLeft: '10px'}}
+        >
+          Sell
+        </button>
       </form>
       {message && <p>{message}</p>}
+      
       <hr />
       <h4>Open Positions</h4>
       {positions.length > 0 ? (
