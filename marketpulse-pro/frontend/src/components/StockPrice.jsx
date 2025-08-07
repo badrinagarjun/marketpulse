@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../api/axiosConfig.js'; // Updated import
 
 const StockPrice = () => {
   const [symbol, setSymbol] = useState('RELIANCE.BSE');
@@ -10,18 +10,11 @@ const StockPrice = () => {
     try {
       setError('');
       setStockData(null);
-      const response = await axios.get(`http://localhost:5001/api/stock/${symbol}`);
-      console.log('API response:', response.data); // Debug log
-
-      // Check if response contains 'Global Quote'
-      if (response.data && response.data['Global Quote'] && Object.keys(response.data['Global Quote']).length > 0) {
-        setStockData(response.data['Global Quote']);
-      } else {
-        setError('No data found for this symbol. Check symbol or try again.');
-      }
+      const response = await api.get(`/api/stock/${symbol}`);
+      setStockData(response.data['Global Quote']);
     } catch (err) {
-      setError('Could not fetch price. Check server, symbol, or try again.');
-      console.error(err);
+      console.error('Error',err);
+      setError('Could not fetch price. Check symbol or try again.');
     }
   };
 
@@ -36,7 +29,7 @@ const StockPrice = () => {
       />
       <button onClick={fetchPrice}>Get Price</button>
       {error && <p style={{color: 'red'}}>{error}</p>}
-      {stockData && (
+      {stockData && Object.keys(stockData).length > 0 && (
         <div>
           <p><strong>Symbol:</strong> {stockData['01. symbol']}</p>
           <p><strong>Price:</strong> {stockData['05. price']}</p>

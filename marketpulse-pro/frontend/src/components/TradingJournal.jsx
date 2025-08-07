@@ -1,21 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api/axiosConfig.js'; // Updated import
 
 const TradingJournal = () => {
   const [entries, setEntries] = useState([]);
-  const [isEditing, setIsEditing] = useState(null); // To store the ID of the entry being edited
-
-  // Form State
+  const [isEditing, setIsEditing] = useState(null);
   const [formData, setFormData] = useState({
-    symbol: '',
-    tradeType: 'Buy',
-    quantity: '',
-    price: '',
-    notes: ''
+    symbol: '', tradeType: 'Buy', quantity: '', price: '', notes: ''
   });
 
   const fetchEntries = async () => {
-    const res = await axios.get('http://localhost:5001/api/journal');
+    const res = await api.get('/api/journal');
     setEntries(res.data);
   };
 
@@ -46,18 +40,16 @@ const TradingJournal = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isEditing) {
-      // Update logic
-      await axios.put(`http://localhost:5001/api/journal/${isEditing}`, formData);
+      await api.put(`/api/journal/${isEditing}`, formData);
     } else {
-      // Create logic
-      await axios.post('http://localhost:5001/api/journal', formData);
+      await api.post('/api/journal', formData);
     }
     fetchEntries();
     resetForm();
   };
   
   const handleDelete = async (id) => {
-    await axios.delete(`http://localhost:5001/api/journal/${id}`);
+    await api.delete(`/api/journal/${id}`);
     fetchEntries();
   };
 
