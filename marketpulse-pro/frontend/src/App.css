@@ -1,42 +1,259 @@
+/* Global App Styles with Black/White Theme and Text Visibility Fixes */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 25%, #ffffff 50%, #f8f9fa 75%, #e9ecef 100%);
+  min-height: 100vh;
+  color: #212529;
+}
+
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+.App {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  width: 100%;
+}
+
+/* App Header for non-authenticated users */
+.app-header {
   text-align: center;
+  padding: 60px 20px 40px;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(20px);
+  margin: 20px;
+  border-radius: 20px;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.08),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+  border: 2px solid #f1f3f4;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.app-header h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  margin: 0 0 16px 0;
+  background: linear-gradient(135deg, #000000, #333333);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-@keyframes logo-spin {
+.app-header p {
+  font-size: 1.25rem;
+  color: #495057;
+  font-weight: 400;
+}
+
+/* Universal Text Visibility Fixes */
+*,
+*::before,
+*::after {
+  color: inherit;
+}
+
+/* Explicit color declarations for all text elements */
+h1, h2, h3, h4, h5, h6 {
+  color: #212529 !important;
+}
+
+p, span, div, label, li, td, th {
+  color: #212529 !important;
+}
+
+/* Input and form elements */
+input, 
+input[type="text"], 
+input[type="email"], 
+input[type="password"], 
+input[type="number"], 
+select, 
+textarea, 
+button {
+  color: #212529 !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #6c757d !important;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  color: #000000 !important;
+}
+
+/* Link colors */
+a, a:visited {
+  color: #000000 !important;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #333333 !important;
+}
+
+/* Button text */
+button, 
+button * {
+  color: inherit !important;
+}
+
+/* Table text */
+table,
+table * {
+  color: #212529 !important;
+}
+
+/* Navigation specific */
+nav, nav * {
+  color: inherit !important;
+}
+
+/* Form elements in light backgrounds */
+.form-input,
+.form-select,
+.form-textarea,
+input,
+select,
+textarea {
+  background: white !important;
+  color: #212529 !important;
+  border: 2px solid #dee2e6 !important;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  color: #000000 !important;
+  border-color: #333333 !important;
+}
+
+/* Dark text on light cards */
+.dashboard-card,
+.market-card,
+.news-card,
+.panel-section,
+.trading-form,
+.account-selection {
+  color: #212529 !important;
+}
+
+.dashboard-card *,
+.market-card *,
+.news-card *,
+.panel-section *,
+.trading-form *,
+.account-selection * {
+  color: inherit !important;
+}
+
+/* Specific overrides for problematic elements */
+.balance-display,
+.position-symbol,
+.market-name,
+.news-title,
+.card-title {
+  color: #000000 !important;
+}
+
+.balance-label,
+.news-summary,
+.market-hours {
+  color: #495057 !important;
+}
+
+/* Loading states */
+.loading {
+  color: #6c757d !important;
+}
+
+/* Status indicators */
+.status-text,
+.news-time,
+.last-updated {
+  color: #6c757d !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .app-header {
+    margin: 10px;
+    padding: 40px 16px 24px;
+  }
+  
+  .app-header h1 {
+    font-size: 2.25rem;
+  }
+  
+  .app-header p {
+    font-size: 1.1rem;
+  }
+}
+
+/* Animation keyframes */
+@keyframes fadeIn {
   from {
-    transform: rotate(0deg);
+    opacity: 0;
+    transform: translateY(20px);
   }
   to {
-    transform: rotate(360deg);
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+/* Apply fade-in animation to main content */
+.main-content {
+  animation: fadeIn 0.6s ease-out;
+}
+
+/* Remove default browser styling that might interfere */
+button {
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+
+input, select, textarea {
+  outline: none;
+}
+
+/* Ensure all interactive elements are visible */
+button:focus,
+input:focus,
+select:focus,
+textarea:focus,
+a:focus {
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  * {
+    color: #000000 !important;
   }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
+  
+  input, select, textarea {
+    border-color: #000000 !important;
+  }
 }

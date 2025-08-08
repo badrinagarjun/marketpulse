@@ -1,0 +1,320 @@
+/* Global Markets Styles with Black/White Theme */
+.global-markets {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 25%, #ffffff 50%, #f8f9fa 75%, #e9ecef 100%);
+  padding: 24px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.markets-header {
+  text-align: center;
+  margin-bottom: 40px;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.08),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+  border: 2px solid #f1f3f4;
+}
+
+.markets-header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+  background: linear-gradient(135deg, #000000, #333333);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.markets-header p {
+  font-size: 1.1rem;
+  color: #495057;
+  margin: 0 0 16px 0;
+}
+
+.last-updated {
+  font-size: 0.9rem;
+  color: #6c757d;
+  background: rgba(248, 249, 250, 0.8);
+  padding: 8px 16px;
+  border-radius: 12px;
+  display: inline-block;
+  border: 1px solid #e9ecef;
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border: 3px solid #f3f4f6;
+  border-top: 3px solid #000000;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-left: 16px;
+}
+
+/* Market Timings */
+.market-timings {
+  margin-bottom: 40px;
+}
+
+.market-timings h2 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #212529;
+  margin: 0 0 24px 0;
+  text-align: center;
+}
+
+.timings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.timing-card {
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(20px);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 
+    0 4px 16px rgba(0, 0, 0, 0.06),
+    0 0 0 1px rgba(0, 0, 0, 0.04);
+  border: 2px solid #f1f3f4;
+  transition: all 0.2s ease;
+}
+
+.timing-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 24px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(0, 0, 0, 0.06);
+}
+
+.timing-card.open {
+  border-left: 4px solid #198754;
+}
+
+.timing-card.closed {
+  border-left: 4px solid #dc3545;
+}
+
+.timing-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.market-name {
+  font-weight: 600;
+  color: #212529;
+  font-size: 1rem;
+}
+
+.status {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status.open {
+  background: rgba(25, 135, 84, 0.1);
+  color: #198754;
+}
+
+.status.closed {
+  background: rgba(220, 53, 69, 0.1);
+  color: #dc3545;
+}
+
+.timing-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.9rem;
+  color: #495057;
+}
+
+.timezone {
+  font-size: 0.8rem;
+  color: #6c757d;
+}
+
+/* Markets Grid */
+.markets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 32px;
+}
+
+.market-section {
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.08),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+  border: 2px solid #f1f3f4;
+  transition: all 0.3s ease;
+}
+
+.market-section:hover {
+  transform: translateY(-4px);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.12),
+    0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+
+.market-section h2 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #212529;
+  margin: 0 0 20px 0;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #f1f3f4;
+}
+
+.market-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.market-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: rgba(248, 249, 250, 0.6);
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+  transition: all 0.2s ease;
+}
+
+.market-item:hover {
+  background: rgba(248, 249, 250, 1);
+  transform: translateX(4px);
+  border-color: #dee2e6;
+}
+
+.symbol-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.symbol {
+  font-weight: 600;
+  color: #212529;
+  font-size: 1rem;
+}
+
+.price-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.price {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #000000;
+}
+
+.change {
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.change.positive {
+  color: #198754;
+  background: rgba(25, 135, 84, 0.1);
+}
+
+.change.negative {
+  color: #dc3545;
+  background: rgba(220, 53, 69, 0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .global-markets {
+    padding: 20px;
+    max-width: 100%;
+  }
+  
+  .markets-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .global-markets {
+    padding: 16px;
+  }
+  
+  .markets-header {
+    padding: 24px;
+  }
+  
+  .markets-header h1 {
+    font-size: 2rem;
+  }
+  
+  .timings-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .market-section {
+    padding: 20px;
+  }
+  
+  .market-item {
+    padding: 12px;
+  }
+  
+  .symbol {
+    font-size: 0.9rem;
+  }
+  
+  .price {
+    font-size: 1rem;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Text visibility fixes */
+.global-markets *,
+.global-markets *::before,
+.global-markets *::after {
+  color: inherit !important;
+}
+
+.market-name,
+.symbol,
+.price,
+.change,
+.status,
+.timing-details,
+.last-updated {
+  color: inherit !important;
+}

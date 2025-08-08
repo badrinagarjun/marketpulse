@@ -1,6 +1,12 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Navigation from './components/Navigation';
 import Dashboard from './components/Dashboard';
+import FundedChallengeDashboard from './components/FundedChallengeDashboard';
+import TradingJournal from './components/TradingJournal';
+import GlobalMarkets from './components/GlobalMarkets';
+import MarketNews from './components/MarketNews';
+import Analysis from './components/Analysis';
 import RegisterPage from './pages/RegisterPage';
 import LoginPage from './pages/LoginPage';
 import PrivateRoute from './components/PrivateRoute';
@@ -8,41 +14,48 @@ import { useAuth } from './context/AuthContext';
 import './App.css';
 
 function App() {
-  const { token, logout } = useAuth();
-  
-  // A small component to handle logout within the Router context
-  const LogoutButton = () => {
-    const navigate = useNavigate();
-    const handleLogout = () => {
-      logout();
-      navigate('/login');
-    };
-    return <button onClick={handleLogout}>Logout</button>;
-  };
+  const { token } = useAuth();
 
   return (
     <Router>
       <div className="App">
-        <nav>
-          {token ? (
-            <>
-              <Link to="/">Dashboard</Link> | <LogoutButton />
-            </>
-          ) : (
-            <>
-              <Link to="/register">Register</Link> | <Link to="/login">Login</Link>
-            </>
-          )}
-        </nav>
-        <h1>MarketPulse Pro 🚀</h1>
-        <Routes>
-          <Route 
-            path="/" 
-            element={<PrivateRoute><Dashboard /></PrivateRoute>} 
-          />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/login" element={<LoginPage />} />
-        </Routes>
+        <Navigation />
+        {!token && (
+          <div className="app-header">
+            <h1>MarketPulse Pro 🚀</h1>
+            <p>Professional Trading Platform</p>
+          </div>
+        )}
+        <main className="main-content">
+          <Routes>
+            <Route 
+              path="/" 
+              element={<PrivateRoute><Dashboard /></PrivateRoute>} 
+            />
+            <Route 
+              path="/challenge" 
+              element={<PrivateRoute><FundedChallengeDashboard /></PrivateRoute>} 
+            />
+            <Route 
+              path="/journal" 
+              element={<PrivateRoute><TradingJournal /></PrivateRoute>} 
+            />
+            <Route 
+              path="/markets" 
+              element={<PrivateRoute><GlobalMarkets /></PrivateRoute>} 
+            />
+            <Route 
+              path="/news" 
+              element={<PrivateRoute><MarketNews /></PrivateRoute>} 
+            />
+            <Route 
+              path="/analysis" 
+              element={<PrivateRoute><Analysis /></PrivateRoute>} 
+            />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/login" element={<LoginPage />} />
+          </Routes>
+        </main>
       </div>
     </Router>
   );
