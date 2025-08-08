@@ -7,6 +7,7 @@ import TradingJournal from './components/TradingJournal';
 import GlobalMarkets from './components/GlobalMarkets';
 import MarketNews from './components/MarketNews';
 import Analysis from './components/Analysis';
+import PaperTradingDashboard from './components/PaperTradingDashboard';
 import RegisterPage from './pages/RegisterPage';
 import LoginPage from './pages/LoginPage';
 import PrivateRoute from './components/PrivateRoute';
@@ -43,6 +44,14 @@ function App() {
             <Route 
               path="/markets" 
               element={<PrivateRoute><GlobalMarkets /></PrivateRoute>} 
+            />
+            <Route 
+              path="/analysis" 
+              element={<PrivateRoute><Analysis /></PrivateRoute>} 
+            />
+            <Route 
+              path="/paper-trading" 
+              element={<PrivateRoute><PaperTradingDashboard /></PrivateRoute>} 
             />
             <Route 
               path="/news" 

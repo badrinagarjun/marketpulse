@@ -61,6 +61,22 @@ const Navigation = () => {
           </Link>
           
           <Link 
+            to="/analysis" 
+            className={`navbar-item ${isActive('/analysis') ? 'active' : ''}`}
+          >
+            <span className="nav-icon">📈</span>
+            <span>Analysis</span>
+          </Link>
+          
+          <Link 
+            to="/paper-trading" 
+            className={`navbar-item ${isActive('/paper-trading') ? 'active' : ''}`}
+          >
+            <span className="nav-icon">🆓</span>
+            <span>Paper Trading</span>
+          </Link>
+          
+          <Link 
             to="/news" 
             className={`navbar-item ${isActive('/news') ? 'active' : ''}`}
           >

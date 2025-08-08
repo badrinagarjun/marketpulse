@@ -1,14 +1,17 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import api from '../api/axiosConfig';
 import './Analysis.css';
+import TradingAPIService from '../services/TradingAPIService';
 
 const Analysis = () => {
   const [selectedSymbol, setSelectedSymbol] = useState('EURUSD');
   const [selectedTimeframe, setSelectedTimeframe] = useState('1H');
+  const chartRef = useRef(null);
+
+  // Use custom hooks for real-time data (with error handling)
   const [account, setAccount] = useState(null);
   const [positions, setPositions] = useState([]);
+  const [indicators, setIndicators] = useState(null);
   const [loading, setLoading] = useState(true);
-  const chartRef = useRef(null);
 
   const symbols = [
     { value: 'EURUSD', label: 'EUR/USD', type: 'forex' },
@@ -46,24 +49,9 @@ const Analysis = () => {
   ];
 
   useEffect(() => {
-    fetchAccountData();
     initializeTradingViewWidget();
+    setLoading(false);
   }, [selectedSymbol, selectedTimeframe, initializeTradingViewWidget]);
-
-  const fetchAccountData = async () => {
-    try {
-      const accountRes = await api.get('/api/challenge/account');
-      setAccount(accountRes.data);
-      
-      const positionsRes = await api.get('/api/challenge/positions');
-      setPositions(positionsRes.data);
-      
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching account data:', error);
-      setLoading(false);
-    }
-  };
 
     const initializeTradingViewWidget = useCallback(() => {
     if (!chartRef.current) return;
@@ -117,6 +105,30 @@ const Analysis = () => {
     fetchAccountData();
     initializeTradingViewWidget();
   }, [selectedSymbol, selectedTimeframe, initializeTradingViewWidget]);
+
+  const fetchAccountData = async () => {
+    try {
+      const accountRes = await TradingAPIService.getChallengeAccount();
+      setAccount(accountRes);
+      
+      const positionsRes = await TradingAPIService.getPositions();
+      setPositions(positionsRes);
+      
+      // Fetch technical indicators
+      try {
+        const indicatorData = await TradingAPIService.getTechnicalIndicators(selectedSymbol);
+        setIndicators(indicatorData);
+      } catch (error) {
+        console.error('Failed to fetch indicators:', error);
+        setIndicators(null);
+      }
+      
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching account data:', error);
+      setLoading(false);
+    }
+  };
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-US', {
@@ -286,20 +298,59 @@ const Analysis = () => {
 
           <div className="panel-section">
             <h3>📊 Technical Indicators</h3>
-            <div className="indicators-list">
-              <div className="indicator-item">
-                <span className="indicator-name">RSI (14)</span>
-                <span className="indicator-value neutral">52.3</span>
+            {loading ? (
+              <div className="loading-spinner small"></div>
+            ) : indicators ? (
+              <div className="indicators-list">
+                {indicators.rsi && (
+                  <div className="indicator-item">
+                    <span className="indicator-name">RSI (14)</span>
+                    <span className={`indicator-value ${indicators.rsi.signal}`}>
+                      {indicators.rsi.value.toFixed(1)}
+                    </span>
+                  </div>
+                )}
+                {indicators.macd && (
+                  <div className="indicator-item">
+                    <span className="indicator-name">MACD</span>
+                    <span className={`indicator-value ${indicators.macd.trend}`}>
+                      {indicators.macd.trend}
+                    </span>
+                  </div>
+                )}
+                {indicators.movingAverages && (
+                  <div className="indicator-item">
+                    <span className="indicator-name">MA Trend</span>
+                    <span className={`indicator-value ${indicators.movingAverages.trend}`}>
+                      {indicators.movingAverages.trend}
+                    </span>
+                  </div>
+                )}
+                {indicators.bollingerBands && (
+                  <div className="indicator-item">
+                    <span className="indicator-name">Bollinger</span>
+                    <span className="indicator-value neutral">
+                      {indicators.bollingerBands.middleBand.toFixed(4)}
+                    </span>
+                  </div>
+                )}
               </div>
-              <div className="indicator-item">
-                <span className="indicator-name">MACD</span>
-                <span className="indicator-value bullish">Bullish</span>
+            ) : (
+              <div className="indicators-list">
+                <div className="indicator-item">
+                  <span className="indicator-name">RSI (14)</span>
+                  <span className="indicator-value neutral">52.3</span>
+                </div>
+                <div className="indicator-item">
+                  <span className="indicator-name">MACD</span>
+                  <span className="indicator-value bullish">Bullish</span>
+                </div>
+                <div className="indicator-item">
+                  <span className="indicator-name">MA (50)</span>
+                  <span className="indicator-value bearish">Bearish</span>
+                </div>
               </div>
-              <div className="indicator-item">
-                <span className="indicator-name">MA (50)</span>
-                <span className="indicator-value bearish">Bearish</span>
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
