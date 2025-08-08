@@ -101,12 +101,7 @@ const Analysis = () => {
     chartRef.current.appendChild(script);
   }, [selectedSymbol, selectedTimeframe]);
 
-  useEffect(() => {
-    fetchAccountData();
-    initializeTradingViewWidget();
-  }, [selectedSymbol, selectedTimeframe, initializeTradingViewWidget]);
-
-  const fetchAccountData = async () => {
+  const fetchAccountData = useCallback(async () => {
     try {
       const accountRes = await TradingAPIService.getChallengeAccount();
       setAccount(accountRes);
@@ -128,7 +123,12 @@ const Analysis = () => {
       console.error('Error fetching account data:', error);
       setLoading(false);
     }
-  };
+  }, [selectedSymbol]);
+
+  useEffect(() => {
+    fetchAccountData();
+    initializeTradingViewWidget();
+  }, [selectedSymbol, selectedTimeframe, initializeTradingViewWidget, fetchAccountData]);
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-US', {

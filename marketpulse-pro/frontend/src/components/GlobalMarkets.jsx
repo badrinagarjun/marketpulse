@@ -111,6 +111,7 @@ const GlobalMarkets = () => {
           currency: commodity.currency
         };
       } catch (error) {
+        console.error(`Failed to fetch ${commodity.name} data:`, error);
         return generateMockCommodityData(commodity);
       }
     });
