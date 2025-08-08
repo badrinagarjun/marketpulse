@@ -5,6 +5,7 @@ import MarketStatus from './MarketStatus';
 import EnhancedStockPrice from './EnhancedStockPrice';
 import TradingJournal from './TradingJournal';
 import FundedChallengeDashboard from './FundedChallengeDashboard';
+import UserChallengeLeaderboard from './UserChallengeLeaderboard';
 import './FundedAccountDashboard.css';
 
 const cardVariants = {
@@ -59,12 +60,22 @@ const Dashboard = () => {
         </motion.div>
       </div>
 
-      {/* Trading Journal */}
+      {/* Challenge Leaderboard */}
       <motion.div
         variants={cardVariants}
         initial="hidden"
         animate="visible"
         transition={{ duration: 0.5, delay: 0.4 }}
+      >
+        <UserChallengeLeaderboard />
+      </motion.div>
+
+      {/* Trading Journal */}
+      <motion.div
+        variants={cardVariants}
+        initial="hidden"
+        animate="visible"
+        transition={{ duration: 0.5, delay: 0.5 }}
       >
         <div className="dashboard-card">
           <TradingJournal />

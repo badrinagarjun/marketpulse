@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import TradingViewChart from './TradingViewChart';
+import AdvancedTradingViewChart from './AdvancedTradingViewChart';
 import './FundedAccountDashboard.css';
 
 const EnhancedStockPrice = () => {
@@ -216,7 +216,14 @@ const EnhancedStockPrice = () => {
             overflow: 'hidden',
             boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
           }}>
-            <TradingViewChart symbol={stockData['01. symbol']} theme="light" />
+            <AdvancedTradingViewChart 
+              symbol={stockData['01. symbol']} 
+              theme="light"
+              interval="D"
+              allowDrawing={true}
+              allowAlerts={true}
+              studies={['Volume@tv-basicstudies', 'MACD@tv-basicstudies', 'RSI@tv-basicstudies']}
+            />
           </div>
         </div>
       )}

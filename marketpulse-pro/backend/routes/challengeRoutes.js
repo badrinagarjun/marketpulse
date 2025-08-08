@@ -179,4 +179,75 @@ router.delete('/reset', protect, async (req, res) => {
   }
 });
 
+// GET - Challenge Leaderboard (all users)
+router.get('/leaderboard', protect, async (req, res) => {
+  try {
+    // Get all challenge accounts with user information
+    const accounts = await ChallengeAccount.find()
+      .populate('user', 'username email')
+      .sort({ createdAt: -1 });
+    
+    // Get positions for all accounts (for P&L calculation)
+    const accountsWithPositions = await Promise.all(
+      accounts.map(async (account) => {
+        const positions = await Position.find({ user: account.user._id });
+        return {
+          ...account.toObject(),
+          positions
+        };
+      })
+    );
+
+    res.json(accountsWithPositions);
+  } catch (error) {
+    console.error('Failed to fetch leaderboard:', error);
+    res.status(500).json({ message: 'Failed to fetch leaderboard', error: error.message });
+  }
+});
+
+// GET - Portfolio Analytics for a specific account
+router.get('/analytics/:accountId', protect, async (req, res) => {
+  try {
+    const { accountId } = req.params;
+    
+    const account = await ChallengeAccount.findById(accountId);
+    if (!account) {
+      return res.status(404).json({ message: 'Account not found' });
+    }
+
+    // Only allow users to see their own analytics or make this admin-only
+    if (account.user.toString() !== req.user.id) {
+      return res.status(403).json({ message: 'Access denied' });
+    }
+
+    const positions = await Position.find({ user: account.user });
+    
+    // Calculate basic analytics
+    const totalPositions = positions.length;
+    const totalInvested = positions.reduce((sum, pos) => sum + (pos.averagePrice * pos.quantity), 0);
+    
+    // This would be expanded with more sophisticated analytics
+    const analytics = {
+      accountValue: account.currentBalance,
+      totalPositions,
+      totalInvested,
+      availableCash: account.currentBalance,
+      performance: {
+        totalReturn: account.currentBalance - account.startingBalance,
+        returnPercentage: ((account.currentBalance - account.startingBalance) / account.startingBalance) * 100
+      },
+      riskMetrics: {
+        // These would be calculated based on historical data
+        sharpeRatio: 0,
+        maxDrawdown: 0,
+        volatility: 0
+      }
+    };
+
+    res.json(analytics);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch analytics', error: error.message });
+  }
+});
+
 export default router;
